@@ -1,0 +1,45 @@
+
+<div class="col-md-4 mb-4">
+    <!-- Heading -->
+    <h4 class="d-flex justify-content-between align-items-center mb-3">
+        <span class="text-muted">Your cart</span>
+        <span class="badge rounded-pill badge-primary">{{ order.items.count }}</span>
+    </h4>
+
+    <!-- Cart -->
+    <ul class="list-group mb-3">
+        {% for order_item in order.items.all %}
+        <li class="list-group-item d-flex justify-content-between">
+            <div>
+                <h6 class="my-0">{{ order_item.quantity }} x {{ order_item.item.title}}</h6>
+                <small class="text-muted">{{ order_item.item.description|truncatewords:5}}</small>
+            </div>
+            <span class="text-muted">&#x20B5 {{ order_item.get_final_price }}</span>
+        </li>
+        {% endfor %}
+        
+        <li class="list-group-item d-flex justify-content-between">
+            <span>Total (GHS)</span>
+            <strong>&#x20B5 {{ order.get_total }}</strong>
+        </li>
+    </ul>
+    <!-- Cart -->
+
+    <!-- Promo code -->
+    <!-- <form class="card p-2">
+        <div class="input-group mb-3">
+<input
+type="text"
+class="form-control"
+placeholder="Promo code"
+aria-label="Promo code"
+aria-describedby="button-addon2"
+/>
+<button class="btn btn-primary" type="button" id="button-addon2" data-mdb-ripple-color="dark">
+redeem
+</button>
+</div>
+    </form> -->
+    <!-- Promo code -->
+</div>
+

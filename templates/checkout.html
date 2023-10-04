@@ -1,0 +1,154 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+{% load static %}
+
+{% block content %}
+
+  <main class="mt-5 pt-4 checkout">
+    <div class="container">
+        <!-- Heading -->
+        <h2 class="my-3 text-center">Checkout form</h2>
+        <form id="paymentForm" action="" method="post">
+          {% csrf_token %}
+          <!--Grid row-->
+            <div class="row">
+              <!--Grid column-->
+              <div class="col-md-8 mb-4">
+                  <!--Card-->
+                  <div class="card p-4">
+                      <!--Grid row-->
+                      <div class="row mb-3">
+                          <!--Grid column-->
+                          <div class="col-md-6 mb-2">
+                              <!--firstName-->
+                              <div class="form-outline">
+                                  {{form.first_name}}
+                                  <label class="form-label" for="typeText">First name</label>
+                              </div>
+                          </div>
+                          <!--Grid column-->
+
+                          <!--Grid column-->
+                          <div class="col-md-6 mb-2">
+                              <!--lastName-->
+                              <div class="form-outline">
+                                {{form.last_name}}
+                                  <label class="form-label" for="typeText">Last name</label>
+                              </div>
+                          </div>
+                          <!--Grid column-->
+                      </div>
+                      <!--Grid row-->
+
+                      <!--email-->
+                      <p class="mb-0">
+                          Email
+                      </p>
+                      <div class="form-outline mb-4">
+                          {{form.email}}
+                          <!-- <input type="email" class="form-control" placeholder="youremail@example.com" aria-label="youremail@example.com" aria-describedby="basic-addon1" /> -->
+                      </div>
+
+                      <p class="mb-0">
+                        Phone Number
+                      </p>
+                      <div class="form-outline mb-4">
+                        {{form.phone_number}}
+                      </div>
+
+                      <!--address-->
+                      <p class="mb-0">
+                          Address
+                      </p>
+                      <div class="form-outline mb-4">
+                        {{form.address}}
+                      </div>
+
+                      
+                      <div class="mb-4 d-flex gap-2">
+                        <span> Amount:</span>
+                        <input  class="form-control" type="hidden" name="" value="{{order.get_total}}" id="amount">
+                        <span style="font-weight: bold;">&#x20B5 {{order.get_total}}</span>
+                      </div>
+                      
+
+
+                      <hr class="mb-4" />                    
+                    <button class="btn btn-primary" type="submit">Continue to checkout</button>
+                  </div>
+                  <!--/.Card-->
+              </div>
+              <!--Grid column-->
+
+              <!--Grid column-->
+              {% include 'order_snippet.html' %}
+              <!--Grid column-->
+          </div>
+      <!--Grid row-->
+        </form>
+        
+    </div>
+</main>
+<!--Main layout-->
+
+
+{% endblock content %}
+
+{% block extra_scripts %}
+
+
+<script>
+  
+const paymentForm = document.getElementById('paymentForm');
+paymentForm.addEventListener("submit", payWithPaystack, false);
+const csrfToken = document.querySelector('input[name="csrfmiddlewaretoken"]').value;
+
+const checkout = document.querySelector('.checkout')
+function sendData(){
+  fetch("{% url 'checkout'  %}", {
+        method:'POST', 
+        headers: {'X-CSRFToken': csrfToken},
+        body:new FormData(paymentForm)
+    }).then(response => {
+      if (response.ok) {
+        // Handle a successful response (e.g., show a success message)
+        console.log('Payment successful');
+        checkout.innerText = 'Your order was successful'
+        checkout.style.height = '50vh'
+        setTimeout(() =>{window.location.href = "{% url 'home' %}"}, 3000)
+        
+      } else {
+        // Handle an error response (e.g., show an error message)
+        console.error('Payment failed');
+        
+      }
+    }).catch(error => {
+      // Handle network errors or other issues
+      console.error('An error occurred:', error);
+      })
+}
+
+function payWithPaystack(e) {
+  e.preventDefault();
+
+  let handler = PaystackPop.setup({
+    key: 'pk_test_0cd4fa33d67c150b06d075823d10d91d16ea943b', // Replace with your public key
+    email: document.getElementById("email-address").value,
+    amount: document.getElementById("amount").value * 100,
+    currency: 'GHS',
+    ref: ''+Math.floor((Math.random() * 1000000000) + 1), // generates a pseudo-unique reference. Please replace with a reference you generated. Or remove the line entirely so our API will generate one for you
+    // label: "Optional string that replaces customer email"
+    onClose: function(){
+      alert('Window closed.');
+    },
+
+    callback: function(response){
+      sendData()
+     
+    }
+  });
+  handler.openIframe();
+}
+
+</script>
+{% endblock extra_scripts %}

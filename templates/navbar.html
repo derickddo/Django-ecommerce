@@ -1,0 +1,88 @@
+{% load cart_template_tags %}
+
+
+  <!-- Navbar -->
+  <nav class="navbar fixed-top navbar-expand-lg text-white navbar-light">
+    <!-- Container wrapper -->
+    <div class="container">    
+      <!-- Toggle button -->
+      <button
+        class="navbar-toggler"
+        type="button"
+        data-mdb-toggle="collapse"
+        data-mdb-target="#navbarSupportedContent1"
+        aria-controls="navbarSupportedContent1"
+        aria-expanded="false"
+        aria-label="Toggle navigation"
+      >
+        <i class="fas fa-bars" style="color: white;"></i>
+      </button>
+  
+      <!-- Collapsible wrapper -->
+      <div class="collapse navbar-collapse" id="navbarSupportedContent1">      
+        <!-- Navbar brand -->
+        <a class="navbar-brand mt-2 mt-sm-0" href="/">
+          <img
+            src="https://mdbcdn.b-cdn.net/img/logo/mdb-transaprent-noshadows.webp"
+            height="20"
+            alt="MDB Logo"
+            loading="lazy"
+          />
+        </a>    
+      </div>
+      <!-- Collapsible wrapper -->
+      
+      <!-- Right elements -->
+      <div class="d-flex align-items-center gap-2">
+        {% if request.user.is_authenticated %}
+        <!-- Icon -->
+        <a class="nav-link me-3" href="{% url 'order-summary' %}">
+          <i class="fas fa-shopping-cart"></i>
+          <span class="badge rounded-pill badge-notification bg-danger">{{ request.user|cart_item_count }} </span>
+        </a>
+
+
+        <div class="dropdown">
+          <button
+            class="btn btn-primary dropdown-toggle"
+            type="button"
+            id="dropdownMenuButton"
+            data-mdb-toggle="dropdown"
+            aria-expanded="false"
+          >
+            {{request.user.username}}
+          </button>
+          <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+            <li><a class="dropdown-item" href="{% url 'account_reset_password' %}">Password reset</a></li>
+            <li><a class="dropdown-item" href="{% url 'account_logout' %}">Logout</a></li>
+          </ul>
+        </div>
+
+        {% else %}
+    
+        <a class="nav-link waves-effect" href="{% url 'account_login' %}">
+          <span class="clearfix d-none d-sm-inline-block"> Login </span>
+        </a>
+    
+      
+        <a class="nav-link waves-effect" href="{% url 'account_signup' %}">
+          <span class="clearfix d-none d-sm-inline-block"> Signup </span>
+        </a>
+    
+      {% endif %}
+  
+        <!-- <a class="nav-link me-3" href="#">
+          <i class="fab fa-facebook-f"></i>
+        </a>
+        <a class="nav-link me-3" href="#">
+          <i class="fab fa-twitter"></i>
+        </a> -->
+      </div>
+      <!-- Right elements -->
+      
+    </div>
+    <!-- Container wrapper -->
+  </nav>
+  <!-- Navbar -->
+  <!-- Right -->
+  

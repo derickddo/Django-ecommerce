@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+
+<main class="mt-5 pt-4">
+  <div class="container mt-5">
+      <!--Grid row-->
+      <div class="row">
+          <!--Grid column-->
+          <div class="col-md-6 mb-4">
+              <img src="{{ object.itemimage_set.first.image.url }}" class="img-fluid" alt="" />
+          </div>
+          <!--Grid column-->
+
+          <!--Grid column-->
+          <div class="col-md-6 mb-4">
+              <!--Content-->
+              <div class="p-4">
+                  <div class="mb-3">
+                      <a href="">
+                          <span class="badge bg-dark me-1">{{object.category.name}}</span>
+                      </a>
+                      <a href="">
+                          <span class="badge bg-info me-1">New</span>
+                      </a>
+                  </div>
+
+                  <p class="lead">
+                      <span class="me-1">
+                          <del>$200</del>
+                      </span>
+                      <span class=""> &#x20B5 {{object.price}}</span>
+                  </p>
+
+                  <strong><p style="font-size: 20px;">Description</p></strong>
+
+                  <p>{{object.description}}</p>
+
+                  <a href="{{ object.get_add_to_cart_url }}" class="btn btn-primary btn-md my-0 p">
+                    Add to cart
+                    <i class="fas fa-shopping-cart ml-1"></i>
+                  </a>
+                  <a href="{{ object.get_remove_from_cart_url }}" class="btn btn-danger btn-md my-0 p">
+                    Remove from cart
+                  </a>
+              </div>
+              <!--Content-->
+          </div>
+          <!--Grid column-->
+      </div>
+      <!--Grid row-->
+
+      <hr />
+
+      <!--Grid row-->
+      <div class="row d-flex justify-content-center">
+          <!--Grid column-->
+          <div class="col-md-6 text-center">
+              <h4 class="my-4 h4">Additional information</h4>
+
+              <p>{{object.description}}</p>
+          </div>
+          <!--Grid column-->
+      </div>
+      <!--Grid row-->
+
+      <!--Grid row-->
+      <div class="row">
+          
+          {% for image in object.itemimage_set.all %}
+            <!--Grid column-->
+            <div class="col-lg-4 col-md-12 mb-4">
+
+              <img class="img-fluid"  src="{{ image.image.url }}" alt="Item Image">
+
+            </div>
+          {% endfor %}
+
+      </div>
+      <!--Grid row-->
+  </div>
+</main>
+<!--Main layout-->
+
+
+{% endblock content %}
