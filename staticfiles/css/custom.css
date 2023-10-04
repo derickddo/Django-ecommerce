@@ -1,0 +1,46 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat&display=swap');
+*{
+    font-family: 'Montserrat', sans-serif;
+}
+.carousel-item {
+    height: 50vh;
+  }
+.card {
+box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+}
+.footer-cta {
+box-shadow: rgba(0, 0, 0, 0.15) 0px 5px 15px;
+}
+.price {
+color: #263238;
+font-size: 24px;
+}
+
+.card-title {
+color:#263238
+}
+
+.sale {
+color: #E53935
+}
+
+.sale-badge {
+background-color: #E53935
+}
+.order-summary-main{
+    height: 100vh;
+}
+.table{
+    height: 100%;
+    background: rgb(255, 131, 152);
+}
+td i{
+    color: #000;
+}
+.fa-trash{
+    float: right;
+}
+.navbar, .card-body{
+    background: #000;
+    color: white;
+}
