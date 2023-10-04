@@ -1,0 +1,4 @@
+__init__.py
+migrations
+db.sqlite3
+.vscode

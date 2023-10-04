@@ -47,12 +47,13 @@ class OrderAdmin(admin.ModelAdmin):
         'payment',
         'ref_code',
         
+        
        
     ]
     list_display_links = [
         'user',
         'payment',
-
+        
         
     ]
     list_filter = [
