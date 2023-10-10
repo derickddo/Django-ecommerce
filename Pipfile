@@ -9,6 +9,7 @@ django-allauth = "*"
 crispy-bootstrap5 = "*"
 pillow = "*"
 python-dotenv = "*"
+mysqlclient = "*"
 
 [dev-packages]
 

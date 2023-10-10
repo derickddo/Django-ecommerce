@@ -1,24 +1,30 @@
 from django.db import models
-from django.contrib.auth.models import AbstractUser, User
+from django.contrib.auth.models import AbstractUser
 from django.utils.text import slugify
 from django.urls import reverse
+from django.template.defaultfilters import date, time
 
-    
-class Category(models.Model):
-    name = models.CharField(max_length = 30, null = False, blank = False, unique = True)
+class CustomUser(AbstractUser):
+    first_name = models.CharField(max_length=20, null=True)
+    last_name = models.CharField(max_length=20, null=True)
+    email = models.EmailField(unique=True)
+    phone_number = models.PositiveBigIntegerField(null=True)
+    address = models.CharField(max_length=50, null=True)
+
+    USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = ['username']
+
     def __str__(self) -> str:
-        return f'{self.name}'
+        return f"{self.first_name} {self.last_name}"
+    
     class Meta:
-        verbose_name_plural = 'categories'
-        db_table = 'category'
-
+        db_table = 'user'
 
 
 class Item(models.Model):
     title = models.CharField(max_length=100)
     price = models.FloatField()
-    category = models.ForeignKey(Category, on_delete=models.DO_NOTHING)
-    slug = models.SlugField(null=True, blank=True, unique=True)
+    slug = models.SlugField(null=True, blank=True, unique=True,editable=False)
     description = models.TextField(blank=True, null=True)
 
     def __str__(self):
@@ -45,23 +51,6 @@ class Item(models.Model):
     
 
 
-class Size(models.Model):
-    SIZE_CHOICES = [
-        ('Small','S'), 
-        ('Medium', 'M'), 
-        ('Large', 'L'),
-        ('Extra Large', 'XL'),
-        ('Extra Extra Large', '2XL'),
-    ]
-    name = models.CharField(max_length=30)
-    code = models.CharField(choices=SIZE_CHOICES, max_length=30)
-    
-    def __str__(self):
-        return f'{self.name}'
-
-    class Meta:
-        db_table = 'size'
-
 
 
 class ItemImage(models.Model):
@@ -74,7 +63,7 @@ class ItemImage(models.Model):
 
     
 class OrderItem(models.Model):
-    user = models.ForeignKey(User,on_delete=models.CASCADE)
+    user = models.ForeignKey(CustomUser,on_delete=models.CASCADE)
     item = models.ForeignKey(Item, on_delete=models.CASCADE)
     quantity = models.PositiveIntegerField(default=1)
     ordered = models.BooleanField(default=False)
@@ -91,7 +80,7 @@ class OrderItem(models.Model):
         db_table = 'order_item'
 
 class Order(models.Model):
-    user = models.ForeignKey(User, on_delete = models.CASCADE)
+    user = models.ForeignKey(CustomUser, on_delete = models.CASCADE)
     items = models.ManyToManyField(OrderItem)
     start_date = models.DateTimeField(auto_now_add=True)
     ordered_date = models.DateTimeField()
@@ -110,25 +99,30 @@ class Order(models.Model):
             total += order_item.get_total_item_price()
         return total
     
+    def phone_number(self):
+        return f"{self.user.phone_number}"
+    
+    def address(self):
+        return f"{self.user.address}"
+    
+    def timestamp(self):
+        return f'{date(self.payment.timestamp)} {time(self.payment.timestamp)}'
+    
+    
     class Meta:
         db_table = 'order'
 
 
 class Payment(models.Model):
-    user = models.ForeignKey('UserProfile',on_delete=models.SET_NULL, blank=True, null=True)
+    user = models.ForeignKey(CustomUser,on_delete=models.SET_NULL, blank=True, null=True)
     amount = models.FloatField()
     timestamp = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return f'{self.amount} GHS'
+    
+    class Meta:
+        db_table = 'payment'
 
-class UserProfile(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    first_name = models.CharField(max_length=20)
-    last_name = models.CharField(max_length=20)
-    address = models.CharField(max_length=100)
-    phone_number = models.PositiveBigIntegerField()
 
-    def __str__(self):
-        return f"{self.first_name} {self.last_name}"
 

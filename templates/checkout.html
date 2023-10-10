@@ -113,9 +113,20 @@ function sendData(){
       if (response.ok) {
         // Handle a successful response (e.g., show a success message)
         console.log('Payment successful');
-        checkout.innerText = 'Your order was successful'
-        checkout.style.height = '50vh'
-        setTimeout(() =>{window.location.href = "{% url 'home' %}"}, 3000)
+        
+        checkout.innerHTML = ` 
+        <div class="pt-4 container">
+      
+          <div class="alert alert-dismissible alert-primary fade show" role="alert">
+            Your order was successfull!
+            <buttontype="button" class="btn-close ms-2" data-mdb-dismiss="alert" aria-label="Close"></button>
+          </div>
+          <p class="text-gray">You will receive your package in less than 3 days. For any information contact +233 0534342245
+          <p>
+          <br/>
+          <a class="btn btn-primary" href="/">Go to home</a>
+        </div>`
+        checkout.style.height = '70vh'
         
       } else {
         // Handle an error response (e.g., show an error message)

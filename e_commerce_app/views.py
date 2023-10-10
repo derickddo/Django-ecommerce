@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views.generic import ListView, DetailView, View
-from .models import Item, Order, OrderItem, Category, UserProfile, Payment
+from .models import Item, Order, OrderItem, CustomUser, Payment
 from django.utils import timezone
 from django.conf import settings
 from django.contrib import messages
@@ -24,19 +24,14 @@ class HomeView(View):
             search = self.request.GET.get('search')
         else:
             search = ""
-        if self.request.GET.get('q'):
-            query_param =  self.request.GET.get('q')
-        else:
-             query_param = ""
-        items = Item.objects.filter(Q(category__name__icontains=query_param)|Q(title__icontains=search))
+        items = Item.objects.filter(Q(title__icontains=search))
         paginator = Paginator(items, per_page=10)
         page_number = request.GET.get('page')
         page = paginator.get_page(page_number)
        
-        categories = Category.objects.all()
         context = {
             'object_list':page,
-            'categories':categories
+
         }
         return render(self.request, 'home.html', context)
 
@@ -63,10 +58,16 @@ class CheckoutView(View, LoginRequiredMixin):
     def get(self, request):
         try:
             order = Order.objects.get(user=self.request.user, ordered=False)
-            
+            user = request.user
             context = {
                 'order':order,
-                'form':CheckoutForm()
+                'form':CheckoutForm(initial={
+                    'first_name': user.first_name,
+                    'last_name': user.last_name,
+                    'phone_number':user.phone_number,
+                    'address':user.address,
+                    'email':user.email
+                })
             }
             return render(request, "checkout.html", context)
         except ObjectDoesNotExist:
@@ -76,15 +77,15 @@ class CheckoutView(View, LoginRequiredMixin):
     def post(self, request):
         order = Order.objects.get(user=self.request.user, ordered=False)
         form = CheckoutForm(request.POST or None)
+
         if form.is_valid():
-            user = UserProfile.objects.filter(user = request.user).first()
-            if not user:
-               user = UserProfile.objects.create(
-                   user=request.user, 
-                   first_name= form.cleaned_data['first_name'], last_name=form.cleaned_data['last_name'], 
-                   address=form.cleaned_data['address'], 
-                   phone_number=form.cleaned_data['phone_number']
-                )
+            user = CustomUser.objects.filter(id= request.user.id).first()
+            user.first_name = form.cleaned_data['first_name'] 
+            user.last_name = form.cleaned_data['last_name']
+            user.address = form.cleaned_data['address'] 
+            user.phone_number = form.cleaned_data['phone_number']
+            user.save()    
+                
             payment = Payment.objects.create(
                 user=user, 
                 amount=order.get_total()

@@ -1,4 +1,4 @@
-from .models import Item, Order, OrderItem, Category, ItemImage, Payment, UserProfile
+from .models import Item, Order, OrderItem, ItemImage, Payment, CustomUser
 from django.contrib import admin
 from django.contrib import messages
 from django import forms
@@ -45,16 +45,16 @@ class OrderAdmin(admin.ModelAdmin):
         'being_delivered',
         'received',
         'payment',
+        'phone_number',
+        'address',
+        'timestamp',
         'ref_code',
-        
-        
-       
+         
     ]
-    list_display_links = [
-        'user',
+    list_display_links = [ 
         'payment',
-        
-        
+        'user',
+           
     ]
     list_filter = [
         'ordered',
@@ -64,10 +64,13 @@ class OrderAdmin(admin.ModelAdmin):
     
     ]
     search_fields = [
-        'user__username',
-        'ref_code'
+        'ref_code',
+        'user__first_name'
+        
     ]
     actions = [make_order_delivered, make_order_not_received, make_order_received, make_order_not_delivered]
+
+
 class ItemImageForm(forms.ModelForm):
     class Meta:
         model = ItemImage
@@ -88,16 +91,7 @@ class ItemImageInline(admin.TabularInline):
         # Allow deleting images
         return True
     
-  
-    
-    # def formfield_for_foreignkey(self, db_field, request, **kwargs):
-    #     if db_field.name == "item":
-    #         # Set the item field to the current item being edited
-    #         kwargs["queryset"] = Item.objects.filter(id=request.resolver_match.kwargs['object_id'])
-    #     return super().formfield_for_foreignkey(db_field, request, **kwargs)
 
-    # def has_add_permission(self, request, obj=None):
-    #     messages.warning(request, f"You can only add {self.max_num} images for this item.")
            
 
 class ItemAdmin(admin.ModelAdmin):
@@ -119,11 +113,10 @@ class PaymentAdmin(admin.ModelAdmin):
     search_fields = ['user']
 
 class UserProfileAdmin(admin.ModelAdmin):
-    list_display = ['user','phone_number', 'address']
+    list_display = ['first_name', 'last_name', 'email','phone_number', 'address']
 
 admin.site.register(Item, ItemAdmin)
 admin.site.register(OrderItem)
 admin.site.register(Order, OrderAdmin)
-admin.site.register(Category)
 admin.site.register(Payment, PaymentAdmin)
-admin.site.register(UserProfile, UserProfileAdmin)
+admin.site.register(CustomUser, UserProfileAdmin)
